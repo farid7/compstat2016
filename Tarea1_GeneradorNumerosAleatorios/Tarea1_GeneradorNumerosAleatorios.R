@@ -134,3 +134,5 @@ server <- function(input, output) {
 }
 
 shinyApp(ui = ui, server = server)
+
+shiny::runGitHub("compstat2016", "farid7", subdir = "Tarea1_GeneradorNumerosAleatorios")
