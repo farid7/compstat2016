@@ -63,7 +63,7 @@ shinyServer(function(input, output) {
   })
   
   output$plot_hist_Total <- renderPlot({
-    hist(priori_a() * priori_b() * priori_sd())
+    hist(priori_a() * priori_b() * priori_sd(), main="distribucin aPriori")
   })
 })
 
