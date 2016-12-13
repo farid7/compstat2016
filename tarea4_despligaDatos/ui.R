@@ -45,4 +45,4 @@ shinyUI(fluidPage(
     )
   )))
 
-#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despliegaDatos")
+#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despligaDatos")
