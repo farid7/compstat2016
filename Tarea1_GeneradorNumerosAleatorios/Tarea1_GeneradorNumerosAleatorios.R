@@ -1,6 +1,13 @@
 if(!require(shiny)) install.packages("shiny")
 set.seed(24082016)
 library(shiny)
+library(ggplot2)
+
+LCG <- function(nsim, M = 2^32, a = 22695477, c = 1, seed = 110104){
+  X = c(seed, numeric(nsim-1)) # Preallocate space
+  for(i in 1:(nsim-1)) X[i+1] <- ((a*X[i] + c)%% M) # Apply LCG rule 
+  return(X/M) # Apply transform
+}
 
 ui <- fluidPage(
   h1("Tarea1 Generador de números aleatorios"),
@@ -23,8 +30,8 @@ ui <- fluidPage(
     sidebarPanel(
       fluidRow(radioButtons("radioBtn", "Tipo de distribución:",
                    c("Uniforme (GCL)"         = "UNIF",
-                     "Exponencial (Fnc-Inv)" = "EXP",
-                     "Normal "               = "NORM",
+                     "Exponencial (Fnc-Inv)"  = "EXP",
+                     "Normal (Box-Müller)"    = "NORM",
                      "Geometrica"             = "GEOM")))
     ),
     
@@ -41,14 +48,20 @@ ui <- fluidPage(
 server <- function(input, output) {
   data <- reactive({
     switch(input$radioBtn,
-           #generador de congruencia lineal
+           #generador de congruencia lineal, distribución uniforme
     UNIF = {
-      sapply(seq(1,input$num), function(x, a=22695477, c=1, m=2**32){
-        return(((a*x + c) %% m) / m)
-      })
+      LCG(input$num)
+      # sapply(aux[2:input$num], function(x, a=22695477, c=1, m=2**32){
+      #   return(((a*x + c) %% m) / m)
+      #   })
     },
-    #distribución uniforme
-    NORM = rnorm(input$num),
+    
+   #Box-Müller
+    NORM = { #rnorm(input$num)
+      u1 <- runif(input$num)   #R2 <- -2*log(u1)
+      u2 <- runif(input$num)   #theta <- 2*pi*u2
+      sqrt(-2*log(u1))*cos(2*pi*u2)
+      },
     #función inversa
     EXP  = {
       sapply(seq(1, input$num), function(x, lambda=10){
@@ -56,6 +69,7 @@ server <- function(input, output) {
         return(-log(1-u)/lambda)
       })
     },
+   
     GEOM = {
       sapply(seq(1, input$num), function(x, prob=0.5){
         u <- runif(length(x))
@@ -66,7 +80,7 @@ server <- function(input, output) {
   
   kolmogorovTest <- reactive({
     switch(input$radioBtn,
-           UNIF = ks.test(data(), runif(input$num)),
+           UNIF = ks.test(data(), "punif"),
            NORM = ks.test(data(), "pnorm"),
            EXP  = ks.test(data(), "pexp"),
            GEOM = ks.test(data(), rgeom(input$num, prob=0.5)))
@@ -74,15 +88,15 @@ server <- function(input, output) {
   
   chiTest <- reactive({
     switch(input$radioBtn,
-           UNIF = {breaks <- c(seq(0,10, by=1))
-                   o <- table(cut(data(), breaks = breaks))
+           UNIF = {breaks <- seq(0,1, length.out = input$num/10)
+                   o <- table(cut(data(), breaks=breaks))
                    p <- diff(punif(breaks))
-                   chisq.test(o, p=p, rescale.p = T)},
-           NORM = {breaks <- c(seq(0,10, by=1))
+                   chisq.test(o, p=p, rescale.p=T)},
+           NORM = {breaks <- c(seq(-5,5, length.out = input$num/10))
                    o <- table(cut(data(), breaks = breaks))
                    p <- diff(pnorm(breaks))
                    chisq.test(o, p=p, rescale.p = T)},
-           EXP  = {breaks <- c(seq(0,10, by=1))
+           EXP  = {breaks <- c(seq(0,10, length.out = input$num/10))
                    o <- table(cut(data(), breaks = breaks))
                    p <- diff(pexp(breaks))
                    chisq.test(o, p=p, rescale.p = T)},
@@ -130,9 +144,11 @@ server <- function(input, output) {
                    plot(q1, q2, main="Q-Q Plot", ylab = "geomInv", xlab="qgeom")}
       )
     plot(data()[1:length(data())-1], data()[2:length(data())], main = "Secuencia en números")
+    #qplot(data()[-length(data())], data()[-1], main = "Secuencia en números")
   })
 }
 
 shinyApp(ui = ui, server = server)
 
-shiny::runGitHub("compstat2016", "farid7", subdir = "Tarea1_GeneradorNumerosAleatorios")
+#shiny::runGitHub("compstat2016", "farid7", subdir = "Tarea1_GeneradorNumerosAleatorios")
+#shiny::runGitHub("compstat2016", "carlosurteaga")
