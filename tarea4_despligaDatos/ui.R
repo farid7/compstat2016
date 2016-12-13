@@ -7,6 +7,8 @@ library(ggplot2)
 library(DT)
 library(shiny)
 
+data <- read.csv(file="cheese.csv", header=T)
+
 shinyUI(fluidPage(
   titlePanel("Tarea4_DataTable"),
   h4("Angel Farid Fajardo Oroz"),
@@ -43,4 +45,4 @@ shinyUI(fluidPage(
     )
   )))
 
-#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea3_integracionMonteCarlo")
+#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despliegaDatos")

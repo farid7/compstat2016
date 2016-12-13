@@ -46,8 +46,6 @@ shinyServer(function(input, output) {
     if(is.null(input$cVariables))
       return()
     else{
-      # aux1 <- dataInput()[,1]
-      # aux2 <- dataInput()[,2]
       return(plot(dataInput(), main="Grafica de dispersion para quesos"))
     }
   })
@@ -69,4 +67,4 @@ shinyServer(function(input, output) {
   })
 })
 
-#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea3_integracionMonteCarlo")
+#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despliegaDatos")
