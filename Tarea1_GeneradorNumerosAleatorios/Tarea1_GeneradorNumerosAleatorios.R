@@ -1,12 +1,12 @@
 if(!require(shiny)) install.packages("shiny")
 set.seed(24082016)
 library(shiny)
-library(ggplot2)
+#library(ggplot2)
 
 LCG <- function(nsim, M = 2^32, a = 22695477, c = 1, seed = 110104){
-  X = c(seed, numeric(nsim-1)) # Preallocate space
-  for(i in 1:(nsim-1)) X[i+1] <- ((a*X[i] + c)%% M) # Apply LCG rule 
-  return(X/M) # Apply transform
+  X = c(seed, numeric(nsim-1)) # Aparta memoria
+  for(i in 1:(nsim-1)) X[i+1] <- ((a*X[i] + c)%% M) # Aplica GenradorCongruenciaLineal
+  return(X/M) # Aplica transformacion
 }
 
 ui <- fluidPage(
