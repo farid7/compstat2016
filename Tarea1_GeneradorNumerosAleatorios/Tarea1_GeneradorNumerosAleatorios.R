@@ -32,7 +32,8 @@ ui <- fluidPage(
                    c("Uniforme (GCL)"         = "UNIF",
                      "Exponencial (Fnc-Inv)"  = "EXP",
                      "Normal (Box-Müller)"    = "NORM",
-                     "Geometrica"             = "GEOM")))
+                     "Geometrica"             = "GEOM")),
+      column(5, offset=1, downloadButton('downloadData', 'Descargar Datos')))
     ),
     
   mainPanel(
@@ -146,6 +147,14 @@ server <- function(input, output) {
     plot(data()[1:length(data())-1], data()[2:length(data())], main = "Secuencia en números")
     #qplot(data()[-length(data())], data()[-1], main = "Secuencia en números")
   })
+  
+  output$downloadData <- downloadHandler(
+    filename = function() { paste(input$radioBtn, '.csv', sep='') },
+    content = function(file) {
+      write.csv(data(), file)
+    }
+  )
+  
 }
 
 shinyApp(ui = ui, server = server)

@@ -5,7 +5,7 @@ if(!require(DT)) install.packages("DT")
 library(ggplot2)
 library(DT)
 library(shiny)
-#setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
+setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
 #setwd("/home/farid/Documents/estadistica computacional 2016b/tarea4_despligaDatos")
 data <- read.csv(file="cheese.csv", header=T)
 
@@ -100,10 +100,10 @@ server <- function(input, output) {
   })
   
   output$plot_hist_Total <- renderPlot({
-    hist(priori_a() + priori_b() + priori_sd())
+    hist(priori_a() * priori_b() * priori_sd())
   })
 }
 
 shinyApp(ui = ui, server = server)
 
-#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despliegaDatos")
+#shiny::runGitHub("compstat2016", "farid7", subdir = "tarea4_despligaDatos")

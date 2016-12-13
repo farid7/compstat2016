@@ -26,7 +26,8 @@ shinyUI(
                    c("Uniforme (GCL)"         = "UNIF",
                      "Exponencial (Fnc-Inv)"  = "EXP",
                      "Normal (Box-Müller)"    = "NORM",
-                     "Geometrica"             = "GEOM")))
+                     "Geometrica"             = "GEOM")),
+      column(5, offset=1, downloadButton('downloadData', 'Descargar Datos')))
     ),
     
   mainPanel(
