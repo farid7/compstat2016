@@ -5,8 +5,8 @@ if(!require(DT)) install.packages("DT")
 library(ggplot2)
 library(DT)
 library(shiny)
-#setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
-setwd("/home/farid/Documents/estadistica computacional 2016b/tarea4_despligaDatos")
+setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
+#setwd("/home/farid/Documents/estadistica computacional 2016b/tarea4_despligaDatos")
 data <- read.csv(file="cheese.csv", header=T)
 
 Taste <- data$taste
@@ -21,7 +21,7 @@ x <- seq(-10, 10, length.out = n)
 y <- A*x + B + rnorm(n, mean=0, sd=C)
 ###########################################################
 #declaring some functions##################################
-loglikelihood <- function(x, y, theta){
+loglikelihood <- function(x, y, theta){        #Likelihood has normal distribution over theta
   a   <- theta[1]
   b   <- theta[2]
   std <- theta[3]
@@ -32,7 +32,7 @@ loglikelihood <- function(x, y, theta){
   return(sumll)
 }
 
-logprior <- function(theta){
+logprior <- function(theta){         #priori add normal and unif probabilities densities
   a   <- theta[1]
   b   <- theta[2]
   std <- theta[3]
