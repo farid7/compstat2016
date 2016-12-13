@@ -28,7 +28,7 @@ shinyServer(function(input, output) {
       },
     #función inversa
     EXP  = {
-      sapply(seq(1, input$num), function(x, lambda=10){
+      sapply(seq(1, input$num), function(x, lambda=input$lda){
         u <- runif(length(x))
         return(-log(1-u)/lambda)
       })
@@ -84,9 +84,9 @@ shinyServer(function(input, output) {
   })
   
   output$hist <- renderPlot({
-    h <- hist(data(), breaks = 20, plot=F)
+    h <- hist(data(), breaks = input$bins, plot=F)
     d <- density(data())
-    hist(data(), breaks = 20,
+    hist(data(), breaks = input$bins,
          main= isolate(input$title))
     lines(x=d$x, y=d$y*length(data())*diff(h$breaks)[1], ldw=2)
   })

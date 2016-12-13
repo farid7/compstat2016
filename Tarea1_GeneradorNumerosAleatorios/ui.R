@@ -10,7 +10,11 @@ shinyUI(
   
   fluidRow(column(4, offset = 4, sliderInput("num", h5("Cantidad de números a simular"),
               min = 20, max = 1000,
-              value = 50))
+              value = 50)),
+           column(4, offset= 1, sliderInput("bins", h5("Cantidad de barras en histograma"),
+                                            min = 5, max = 100, value = 10)),
+           column(4, offset= 1, sliderInput("lda", h5("Parametro Lamda para fun(exp)"),
+                                            min = 1, max = 50, value = 1))
           ),
   
   h3("Pruebas de bondad de ajuste"),

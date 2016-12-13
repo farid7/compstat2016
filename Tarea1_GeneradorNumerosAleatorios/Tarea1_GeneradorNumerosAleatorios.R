@@ -16,7 +16,11 @@ ui <- fluidPage(
   
   fluidRow(column(4, offset = 4, sliderInput("num", h5("Cantidad de números a simular"),
               min = 20, max = 1000,
-              value = 50))
+              value = 50)),
+           column(4, offset= 1, sliderInput("bins", h5("Cantidad de barras en histograma"),
+                                            min = 5, max = 100, value = 10)),
+           column(4, offset= 1, sliderInput("lda", h5("Parametro Lamda para fun(exp)"),
+                                            min = 1, max = 50, value = 1))
           ),
   
   h3("Pruebas de bondad de ajuste"),
@@ -65,7 +69,7 @@ server <- function(input, output) {
       },
     #función inversa
     EXP  = {
-      sapply(seq(1, input$num), function(x, lambda=10){
+      sapply(seq(1, input$num), function(x, lambda=input$lda){
         u <- runif(length(x))
         return(-log(1-u)/lambda)
       })
@@ -121,9 +125,9 @@ server <- function(input, output) {
   })
   
   output$hist <- renderPlot({
-    h <- hist(data(), breaks = 20, plot=F)
+    h <- hist(data(), breaks = input$bins, plot=F)
     d <- density(data())
-    hist(data(), breaks = 20,
+    hist(data(), breaks = input$bins,
          main= isolate(input$title))
     lines(x=d$x, y=d$y*length(data())*diff(h$breaks)[1], ldw=2)
   })
