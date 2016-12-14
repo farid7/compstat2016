@@ -127,7 +127,9 @@ ui <- fluidPage(
                            column(12, DT::dataTableOutput("cadenasMCMC"))
                          )),
                 tabPanel("Convergencia de MCMC's", 
-                         plotOutput("pConvergencia"))
+                         plotOutput("pConvergencia_A"),
+                         plotOutput("pConvergencia_B"),
+                         plotOutput("pConvergencia_Sd"))
                 )
    )
   )
@@ -323,17 +325,43 @@ server <- function(input, output) {
  })
  
  ##############################################################################
- output$pConvergencia <- renderPlot({
+ output$pConvergencia_A <- renderPlot({
    if(is.null(df()))
      return()
    else{
      par(mfrow=(c(1,1)))
-     return({plot(df()[,1], type = "l")
+     return({plot(df()[,1], type = "l", main="Parametro A")
        lines(df()[,4], col="red")
        lines(df()[,7], col="blue")
        lines(df()[,10], col="green")
        lines(df()[,13], col="black")
-       })
+     })
+   }
+ })
+ output$pConvergencia_B <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     par(mfrow=(c(1,1)))
+     return({plot(df()[,2], type = "l", main="Parametro B")
+       lines(df()[,5], col="red")
+       lines(df()[,8], col="blue")
+       lines(df()[,11], col="green")
+       lines(df()[,14], col="black")
+     })
+   }
+ })
+ output$pConvergencia_Sd <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     par(mfrow=(c(1,1)))
+     return({plot(df()[,3], type = "l", main="Parametro Sd")
+       lines(df()[,6], col="red")
+       lines(df()[,9], col="blue")
+       lines(df()[,12], col="green")
+       lines(df()[,15], col="black")
+     })
    }
  })
 

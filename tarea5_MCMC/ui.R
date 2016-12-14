@@ -70,7 +70,9 @@ shinyUI(
                              column(12, DT::dataTableOutput("cadenasMCMC"))
                            )),
                   tabPanel("Convergencia de MCMC's", 
-                           plotOutput("pConvergencia"))
+                           plotOutput("pConvergencia_A"),
+                           plotOutput("pConvergencia_B"),
+                           plotOutput("pConvergencia_Sd"))
       )
     )
   )
