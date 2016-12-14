@@ -6,7 +6,7 @@ library(ggplot2)
 library(DT)
 library(shiny)
 #setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
-setwd("/home/farid/Documents/estadisticaComputacional/compstat2016/tarea5_MCMC")
+#setwd("/home/farid/Documents/estadisticaComputacional/compstat2016/tarea5_MCMC")
 data <- read.csv(file="cheese.csv", header=T)
 
 Taste <- data$taste
