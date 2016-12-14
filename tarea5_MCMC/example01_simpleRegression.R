@@ -57,11 +57,11 @@ runMCMC <- function(x, y, startValue, iterations){
       chain[i+1, ] = chain[i, ]
       #i <- i-1
     }
-    print(chain[i,])
+    #print(chain[i,])
     print(i)
     #readkey()
   }
-  return(chain)
+  return(data.frame(a=chain[,1], b=chain[,2], sd=chain[,3]))
 }
 
 readkey <- function()
@@ -76,6 +76,8 @@ chain <- runMCMC(data$Acetic, data$taste, startValue = theta0, iterations=10000)
 burnIn <- 5000
 acceptance <- 1 - mean(duplicated(chain[-(1:burnIn), ]))
 
+resultado <- data.frame(chain)
+tail(resultado)
 ###Summary
 par(mfrow=c(2,3))
 hist(chain[-(1:burnIn), 1], nclass=30, main='Posterior of a', xlab='True value = red line')
@@ -96,3 +98,15 @@ plot(chain[-(1:burnIn),3], type = "l", xlab="True value = red line" , main = "Ch
 abline(h = C, col="red" )
 
 summary(lm(y~x))
+
+
+##############################################################################
+##############----Varias cadenas----##########################################
+
+for(i in 1:5){ #5 cadenas
+  aux <- theta0+round(10*runif(1))
+  chain <- runMCMC(data$Acetic, data$taste, startValue = theta0, iterations=10000)
+  resultado <- cbind(resultado, chain)
+}
+
+tail(resultado)

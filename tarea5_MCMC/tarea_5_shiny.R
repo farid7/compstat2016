@@ -19,8 +19,8 @@ B <- 5
 C <- 3
 x <- seq(-10, 10, length.out = n)
 y <- A*x + B + rnorm(n, mean=0, sd=C)
-###########################################################
-#declaring some functions##################################
+##################################################################################
+###########------declaring some functions--------##################################
 loglikelihood <- function(x, y, theta){        #Likelihood has normal distribution over theta
   a   <- theta[1]
   b   <- theta[2]
@@ -68,12 +68,14 @@ runMCMC <- function(x, y, startValue, iterations){
       #i <- i-1
     }
   }
-  return(chain)
+  return(data.frame(a=chain[,1], b= chain[,2], sd = chain[,3]))
 }
 ############################################################################
 ############################################################################
 ui <- fluidPage(
-  titlePanel("Basic DataTable"),
+  titlePanel("Tarea 5: MCMC"),
+  h3("Angel Farid Fajardo Oroz"),
+  h4("MCC"),
   
   sidebarLayout(
     sidebarPanel(
@@ -81,26 +83,58 @@ ui <- fluidPage(
                               choices = names(data)),
      numericInput("nCadenas", "cadenas a simular", value=1, min=1, max=10, step=1),
      sliderInput("sLongitud", "longitud de cadenas", min=1000, max=10000, value=1000),
+     actionButton("button", "Calcula MCMC"),  #Calcula MCMC
      
      h4("Parámetros aPriori"),
-     sliderInput("a", "a", min=1, max=10, value=5),
-     sliderInput("sSigma", "sigma", min=1, max=10, value=5),
-     sliderInput("e", "error", min=1, max=10, value=5)
+     sliderInput("s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
+     sliderInput("s_b", "b <- Norm", min=1, max=10, value=5),
+     sliderInput("s_sigma", "sigma -> Unif", min=1, max=10, value=c(5, 6))
   ),
   
-  mainPanel("Tarea 4",
-  fluidRow(
-    splitLayout(cellWidths=c("50%", "50%"),DT::dataTableOutput("table"), plotOutput("Graph1")),
-    splitLayout(cellWidths=c("50%", "50%"),DT::dataTableOutput("table2"))
-    ),
-  plotOutput("gPriori")
+  mainPanel(
+    tabsetPanel(type="tabs",
+                tabPanel("datos", 
+                         fluidRow(
+                           column(8, plotOutput("plot_data")),
+                           column(12, DT::dataTableOutput("table"))
+                         )
+                         ),
+                tabPanel("distribuciones aPriori",
+                         fluidRow(
+                           column(4, plotOutput("plot_hist_A")),
+                           column(4, plotOutput("plot_hist_B")),
+                           column(4, plotOutput("plot_hist_Sd")),
+                           column(4, plotOutput("plot_hist_Total"))
+                          )
+                         ),
+                tabPanel("Priori Vs Posteriori",
+                         fluidRow(
+                           column(4, plotOutput("plot_posteriori_A")),
+                           column(4, plotOutput("plot_posteriori_B")),
+                           column(4, plotOutput("plot_posteriori_Sd")),
+                           column(4, plotOutput("plot_posteriori_Total"))
+                          )
+                         ),
+                tabPanel("Parámetros de la regresión",
+                         fluidRow(
+                           column(4, verbatimTextOutput("summary")),
+                           column(4, plotOutput("regresionBayesiana_A")),
+                           column(4, plotOutput("regresionBayesiana_B")),
+                           column(4, plotOutput("regresionBayesiana_Sd")),
+                           column(12, DT::dataTableOutput("cadenasMCMC"))
+                         )),
+                tabPanel("Convergencia de MCMC's", 
+                         plotOutput("pConvergencia"))
+                )
    )
   )
 )
 
 server <- function(input, output) {
   n <- dim(data)[1]
-  
+  resultado <- {}
+  ############################################################
+  ####################--datos de entrada--##############################
   dataInput <- reactive({
     if(is.null(input$cVariables))
       return()
@@ -108,40 +142,65 @@ server <- function(input, output) {
     aux
   })
   
+  ############################################################
+  ####################--grafica de entrada--#########################
+  output$table <- DT::renderDataTable(DT::datatable({
+    if(is.null(input$cVariables))
+      return()
+    else 
+      return(dataInput())
+    
+  }))
+  
+  output$plot_data <- renderPlot({
+    if(is.null(input$cVariables))
+      return()
+    else{
+      # aux1 <- dataInput()[,1]
+      # aux2 <- dataInput()[,2]
+      return(plot(dataInput(), main="Grafica de dispersion para quesos"))
+    }
+  })
+  
+  ############################################################
+  ####################--Variables aPriori--##############################
+  output$plot_hist_A <- renderPlot({
+    priori_a <- runif(n, min=input$s_a[1], max = input$s_a[2])
+    hist(priori_a)
+  })
+  
+  output$plot_hist_B <- renderPlot({
+    priori_b <- rnorm(n, mean=0, sd = input$s_b)
+    hist(priori_b)
+  })
+  
+  output$plot_hist_Sd <- renderPlot({
+    priori_sd <- runif(n, min=input$s_sigma[1], max = input$s_sigma[2])
+    hist(priori_sd)
+  })
+  
+  ############################################################
+  ####################--MCMC--##############################
   chain <- reactive({
     if(is.null(input$cVariables))
       return()
     else{
       theta0 <- c(1,1,1)
-      
       temp <- dataInput()
       chain <- runMCMC(x=data[, input$cVariables[1]], y=Taste, startValue=theta0, iterations=input$sLongitud)
       #chain <- aux1
-      return(chain)
+      return(data.frame(a=chain[,1], b=chain[,2], sd==chain[,3]))
     }
   })
-  
-  nmes <- renderText({
-    input$cVariables
-    })
   
    output$table <- DT::renderDataTable(DT::datatable({
      if(is.null(input$cVariables))
        return()
     else {
-      return(chain())
+      return(dataInput())
       }
      
   }))
-   
-   output$table2 <- DT::renderDataTable(DT::datatable({
-     if(is.null(input$cVariables))
-       return()
-     else 
-       return(dataInput())
-     
-   }))
-   
    
    output$Graph1 <- renderPlot({
      if(is.null(input$cVariables))
@@ -156,6 +215,75 @@ server <- function(input, output) {
    hist(chain()[,1], title=paste("MCMC"))
  }) 
  
+ ####################################################
+ ############---Calcula MCMC con botòn---################
+ df <- eventReactive(input$button, {
+   if(is.null(input$cVariables))
+     return()
+   else{
+     theta0 <- c(1,1,1)
+     temp <- dataInput()
+     chain <- runMCMC(x=temp[,2], y=Taste, startValue=theta0, iterations=input$sLongitud)
+     for (i in 1:input$nCadenas-1){
+       aux <- theta0 + round(10*runif(1))
+       aux2 <- runMCMC(x=temp[,2], y=Taste, startValue=aux, iterations=input$sLongitud)
+       chain <- cbind(chain, aux2)
+     }
+     return(chain)
+   }
+   
+ })
+ 
+ output$cadenasMCMC <- DT::renderDataTable(DT::datatable({
+   if(is.null(df()))
+     return()
+   else 
+     return(df())
+ }))
+ 
+ # output$regresionBayesiana <- renderPlot{
+ #   if(is.null(df()))
+ #     return()
+ #   else 
+ #     return(plot(df(), main="MCMC"))
+ # }
+ 
+ output$regresionBayesiana_A <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return(hist(df()[,1]))
+   }
+ })
+ output$regresionBayesiana_B <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return(hist(df()[,2]))
+   }
+ })
+ output$regresionBayesiana_Sd<- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return(hist(df()[,3]))
+   }
+ })
+ 
+ output$pConvergencia <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     par(mfrow=(c(1,1)))
+     return({plot(df()[,1], type = "l")
+       lines(df()[,4], col="red")
+       lines(df()[,7], col="blue")
+       lines(df()[,10], col="green")
+       lines(df()[,13], col="black")
+       })
+   }
+ })
+
 }
 
 shinyApp(ui = ui, server = server)
