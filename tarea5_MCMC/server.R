@@ -130,35 +130,82 @@ shinyServer(function(input, output) {
      return(df())
  }))
  
- # output$regresionBayesiana <- renderPlot{
- #   if(is.null(df()))
- #     return()
- #   else 
- #     return(plot(df(), main="MCMC"))
- # }
+
+ ############################################################################## 
+ output$hist_posteriori_A <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({AA = mean(df()[-(1:input$sBurnin),1])
+       hist(df()[,1], main=paste("Posterior A: ", AA))
+       abline(v=AA, col="red")
+       })
+   }
+ })
+ output$hist_posteriori_B <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({BB = mean(df()[-(1:input$sBurnin),2])
+     hist(df()[,2], main=paste("Posterior B: ", BB))
+     abline(v=BB, col="red")
+     })
+   }
+ })
+ output$hist_posteriori_Sd <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({Ssd = mean(df()[-(1:input$sBurnin),3])
+     hist(df()[,3], main=paste("Posterior A: ", Ssd))
+     abline(v=Ssd, col="red")
+     })
+   }
+ })
+ output$plot_posteriori_A <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({AA = mean(df()[-(1:input$sBurnin),1])
+            plot(df()[,1], type="l", main=paste("Posterior A: ", AA))
+            abline(h=AA, col="red")
+           })
+   }
+ })
+ output$plot_posteriori_B <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({BB = mean(df()[-(1:input$sBurnin),2])
+       plot(df()[,2], type="l", main=paste("Posterior B: ", BB))
+            abline(h=BB, col="red")
+            })
+   }
+ })
+ output$plot_posteriori_Sd <- renderPlot({
+   if(is.null(df()))
+     return()
+   else{
+     return({Ssd = mean(df()[-(1:input$sBurnin),3])
+            plot(df()[,3], type="l", main=paste("Posterior Sd: ", Ssd))
+            abline(h=Ssd, col="red")
+            })
+     
+   }
+ })
  
- output$regresionBayesiana_A <- renderPlot({
-   if(is.null(df()))
+##############################################################################
+ output$regresionCalc <- renderPlot({
+   if(is.null(input$cVariables))
      return()
-   else{
-     return(hist(df()[,1]))
-   }
- })
- output$regresionBayesiana_B <- renderPlot({
-   if(is.null(df()))
-     return()
-   else{
-     return(hist(df()[,2]))
-   }
- })
- output$regresionBayesiana_Sd<- renderPlot({
-   if(is.null(df()))
-     return()
-   else{
-     return(hist(df()[,3]))
-   }
+   else 
+     return({
+       plot(dataInput()[,2], dataInput()[,1])
+       lines(dataInput()[,2], dataInput()[,2]*mean(df()[,1]) + mean(df()[,2]), col="blue") 
+            })
  })
  
+ ##############################################################################
  output$pConvergencia <- renderPlot({
    if(is.null(df()))
      return()
