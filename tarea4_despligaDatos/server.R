@@ -21,13 +21,13 @@ shinyServer(function(input, output) {
   })
   
   priori_a <- reactive({
-    runif(n, min=input$s_a[1], max = input$s_a[2])
+    runif(n, min=input$t4_s_a[1], max = input$t4_s_a[2])
   })
   priori_b <- reactive({
-    rnorm(n, mean=0, sd = input$s_b)
+    rnorm(n, mean=0, sd = input$t4_s_b)
   })
   priori_sd <- reactive({
-    runif(n, min=input$s_sigma[1], max = input$s_sigma[2])
+    runif(n, min=input$t4_s_sigma[1], max = input$t4_s_sigma[2])
   })
   
   nmes <- renderText({
