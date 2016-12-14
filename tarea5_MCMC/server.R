@@ -15,124 +15,8 @@ data <- data[, !names(data) %in% c("id","taste")]
 Rcpp::sourceCpp("funciones.cpp")
 
 set.seed(28112016)
-# n = 100
-# A <- 1
-# B <- 5
-# C <- 3
-# x <- seq(-10, 10, length.out = n)
-# y <- A*x + B + rnorm(n, mean=0, sd=C)
-##################################################################################
-###########------declaring some functions--------##################################
-# loglikelihood <- function(x, y, theta){        #Likelihood has normal distribution over theta
-#   a   <- theta[1]
-#   b   <- theta[2]
-#   std <- theta[3]
-#   
-#   yy <- a*x+b
-#   singleLikelihood <- dnorm(y, mean=yy, sd=std, log=T)
-#   sumll <- sum(singleLikelihood)
-#   return(sumll)
-# }
-# 
-# logprior <- function(theta){         #priori add normal and unif probabilities densities
-#   a   <- theta[1]
-#   b   <- theta[2]
-#   std <- theta[3]
-#   
-#   aa <- dunif(a, min=0, max=50, log=T)
-#   bb <- dnorm(b, sd=5, log=T)     #jump size
-#   std0 <- dunif(std, min=0, max=50, log=T)
-#   return(aa+bb+std0)
-# }
-# 
-# logposteriori <- function(x, y, theta){
-#   return(loglikelihood(x, y, theta) + logprior(theta))
-# }
-# 
-# proposal <- function(theta){
-#   a   <- theta[1]
-#   b   <- theta[2]
-#   std <- theta[3]
-#   #sd is jump size
-#   return(rnorm(3, mean=c(a,b,std), sd=c(0.1, 0.5, 0.3)))
-# }
-# 
-# runMCMC <- function(x, y, startValue, iterations){
-#   chain <- array(dim = c(iterations+1,3))
-#   chain[1,] <- startValue
-#   for (i in 1:iterations){
-#     prop <- proposal(chain[i,])
-#     probab <- exp(logposteriori(x,y,prop)- logposteriori(x,y,chain[i,]))
-#     if(runif(1) < probab){
-#       chain[i+1, ] = prop
-#     } else {
-#       chain[i+1, ] = chain[i, ]
-#       #i <- i-1
-#     }
-#   }
-#   return(data.frame(a=chain[,1], b= chain[,2], sd = chain[,3]))
-# }
-############################################################################
-############################################################################
-ui <- fluidPage(
-  titlePanel("Tarea 5: MCMC"),
-  h3("Angel Farid Fajardo Oroz"),
-  h4("MCC"),
-  
-  sidebarLayout(
-    sidebarPanel(
-     checkboxGroupInput("cVariables", h3("Variables"),
-                              choices = names(data)),
-     numericInput("nCadenas", "cadenas a simular", value=1, min=1, max=10, step=1),
-     sliderInput("sLongitud", "longitud de cadenas", min=1000, max=10000, value=1000),
-     actionButton("button", "Calcula MCMC"),  #Calcula MCMC
-     
-     h4("Parámetros aPriori"),
-     sliderInput("s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
-     sliderInput("s_b", "b <- Norm", min=1, max=10, value=5),
-     sliderInput("s_sigma", "sigma -> Unif", min=1, max=10, value=c(5, 6))
-  ),
-  
-  mainPanel(
-    tabsetPanel(type="tabs",
-                tabPanel("datos", 
-                         fluidRow(
-                           column(8, plotOutput("plot_data")),
-                           column(12, DT::dataTableOutput("table"))
-                         )
-                         ),
-                tabPanel("distribuciones aPriori",
-                         fluidRow(
-                           column(4, plotOutput("plot_hist_A")),
-                           column(4, plotOutput("plot_hist_B")),
-                           column(4, plotOutput("plot_hist_Sd")),
-                           column(4, plotOutput("plot_hist_Total"))
-                          )
-                         ),
-                tabPanel("Priori Vs Posteriori",
-                         fluidRow(
-                           column(4, plotOutput("plot_posteriori_A")),
-                           column(4, plotOutput("plot_posteriori_B")),
-                           column(4, plotOutput("plot_posteriori_Sd")),
-                           column(4, plotOutput("plot_posteriori_Total"))
-                          )
-                         ),
-                tabPanel("Parámetros de la regresión",
-                         fluidRow(
-                           column(4, verbatimTextOutput("summary")),
-                           column(4, plotOutput("regresionBayesiana_A")),
-                           column(4, plotOutput("regresionBayesiana_B")),
-                           column(4, plotOutput("regresionBayesiana_Sd")),
-                           column(12, DT::dataTableOutput("cadenasMCMC"))
-                         )),
-                tabPanel("Convergencia de MCMC's", 
-                         plotOutput("pConvergencia"))
-                )
-   )
-  )
-)
 
-server <- function(input, output) {
+shinyServer(function(input, output) {
   n <- dim(data)[1]
   resultado <- {}
   ############################################################
@@ -289,8 +173,6 @@ server <- function(input, output) {
    }
  })
 
-}
-
-shinyApp(ui = ui, server = server)
+})
 
 #shiny::runGitHub("compstat2016", "farid7", subdir = "tarea5_MCMC")
