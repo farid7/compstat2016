@@ -5,12 +5,14 @@ if(!require(DT)) install.packages("DT")
 library(ggplot2)
 library(DT)
 library(shiny)
-setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
-#setwd("/home/farid/Documents/estadistica computacional 2016b/tarea4_despligaDatos")
+#setwd("/Users/LUSI_ITAM/Documents/farid/estadisticaComputacional_Clase/tareas/tarea4_setupReaingTable")
+setwd("/home/farid/Documents/estadisticaComputacional/compstat2016/tarea5_MCMC")
 data <- read.csv(file="cheese.csv", header=T)
 
 Taste <- data$taste
 data <- data[, !names(data) %in% c("id","taste")]
+
+Rcpp::sourceCpp("funciones.cpp")
 
 set.seed(28112016)
 n = 100
@@ -21,55 +23,55 @@ x <- seq(-10, 10, length.out = n)
 y <- A*x + B + rnorm(n, mean=0, sd=C)
 ##################################################################################
 ###########------declaring some functions--------##################################
-loglikelihood <- function(x, y, theta){        #Likelihood has normal distribution over theta
-  a   <- theta[1]
-  b   <- theta[2]
-  std <- theta[3]
-  
-  yy <- a*x+b
-  singleLikelihood <- dnorm(y, mean=yy, sd=std, log=T)
-  sumll <- sum(singleLikelihood)
-  return(sumll)
-}
-
-logprior <- function(theta){         #priori add normal and unif probabilities densities
-  a   <- theta[1]
-  b   <- theta[2]
-  std <- theta[3]
-  
-  aa <- dunif(a, min=0, max=50, log=T)
-  bb <- dnorm(b, sd=5, log=T)     #jump size
-  std0 <- dunif(std, min=0, max=50, log=T)
-  return(aa+bb+std0)
-}
-
-logposteriori <- function(x, y, theta){
-  return(loglikelihood(x, y, theta) + logprior(theta))
-}
-
-proposal <- function(theta){
-  a   <- theta[1]
-  b   <- theta[2]
-  std <- theta[3]
-  #sd is jump size
-  return(rnorm(3, mean=c(a,b,std), sd=c(0.1, 0.5, 0.3)))
-}
-
-runMCMC <- function(x, y, startValue, iterations){
-  chain <- array(dim = c(iterations+1,3))
-  chain[1,] <- startValue
-  for (i in 1:iterations){
-    prop <- proposal(chain[i,])
-    probab <- exp(logposteriori(x,y,prop)- logposteriori(x,y,chain[i,]))
-    if(runif(1) < probab){
-      chain[i+1, ] = prop
-    } else {
-      chain[i+1, ] = chain[i, ]
-      #i <- i-1
-    }
-  }
-  return(data.frame(a=chain[,1], b= chain[,2], sd = chain[,3]))
-}
+# loglikelihood <- function(x, y, theta){        #Likelihood has normal distribution over theta
+#   a   <- theta[1]
+#   b   <- theta[2]
+#   std <- theta[3]
+#   
+#   yy <- a*x+b
+#   singleLikelihood <- dnorm(y, mean=yy, sd=std, log=T)
+#   sumll <- sum(singleLikelihood)
+#   return(sumll)
+# }
+# 
+# logprior <- function(theta){         #priori add normal and unif probabilities densities
+#   a   <- theta[1]
+#   b   <- theta[2]
+#   std <- theta[3]
+#   
+#   aa <- dunif(a, min=0, max=50, log=T)
+#   bb <- dnorm(b, sd=5, log=T)     #jump size
+#   std0 <- dunif(std, min=0, max=50, log=T)
+#   return(aa+bb+std0)
+# }
+# 
+# logposteriori <- function(x, y, theta){
+#   return(loglikelihood(x, y, theta) + logprior(theta))
+# }
+# 
+# proposal <- function(theta){
+#   a   <- theta[1]
+#   b   <- theta[2]
+#   std <- theta[3]
+#   #sd is jump size
+#   return(rnorm(3, mean=c(a,b,std), sd=c(0.1, 0.5, 0.3)))
+# }
+# 
+# runMCMC <- function(x, y, startValue, iterations){
+#   chain <- array(dim = c(iterations+1,3))
+#   chain[1,] <- startValue
+#   for (i in 1:iterations){
+#     prop <- proposal(chain[i,])
+#     probab <- exp(logposteriori(x,y,prop)- logposteriori(x,y,chain[i,]))
+#     if(runif(1) < probab){
+#       chain[i+1, ] = prop
+#     } else {
+#       chain[i+1, ] = chain[i, ]
+#       #i <- i-1
+#     }
+#   }
+#   return(data.frame(a=chain[,1], b= chain[,2], sd = chain[,3]))
+# }
 ############################################################################
 ############################################################################
 ui <- fluidPage(
@@ -188,8 +190,9 @@ server <- function(input, output) {
       theta0 <- c(1,1,1)
       temp <- dataInput()
       chain <- runMCMC(x=data[, input$cVariables[1]], y=Taste, startValue=theta0, iterations=input$sLongitud)
+      #chain <- data.frame(a=chain[,1], b=chain[,2], sd = chain[,3])
       #chain <- aux1
-      return(data.frame(a=chain[,1], b=chain[,2], sd==chain[,3]))
+      return(data.frame(a=chain[,1], b=chain[,2], sd=chain[,3]))
     }
   })
   
@@ -224,9 +227,11 @@ server <- function(input, output) {
      theta0 <- c(1,1,1)
      temp <- dataInput()
      chain <- runMCMC(x=temp[,2], y=Taste, startValue=theta0, iterations=input$sLongitud)
+     chain <- data.frame(a=chain[,1], b=chain[,2], sd=chain[,3])
      for (i in 1:input$nCadenas-1){
        aux <- theta0 + round(10*runif(1))
        aux2 <- runMCMC(x=temp[,2], y=Taste, startValue=aux, iterations=input$sLongitud)
+       aux2 <- data.frame(a=aux2[,1], b=aux2[,2], sd=aux2[,3])
        chain <- cbind(chain, aux2)
      }
      return(chain)
