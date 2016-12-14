@@ -10,7 +10,19 @@ library(shinydashboard)
 library(ggplot2)
 library(Rcpp)
 
+########################################################
+##########---Leyendo datos---##########################
+data4 <- read.csv(file="cheese.csv", header=T)
+Taste <- data4$taste
+data5 <- data4[, !names(data4) %in% c("id","taste")]
 
+#######################################################
+##########---Funciones Rcpp---########################
+Rcpp::sourceCpp("funciones.cpp")
+
+
+########################################################
+################---User Interface---###############################
 dashboardPage(
   dashboardHeader(
     title = "Estadística computacional",
@@ -146,7 +158,7 @@ dashboardPage(
       ##########################################################
       #########---Set Up Inicial----###################
       tabItem(tabName = "tarea4",
-              h2("Tarea 04"),
+              h2("Tarea 04: Set up inicial para MCMC"),
               tabsetPanel(
                 tabPanel("Generalidades",
                          box(
@@ -166,8 +178,8 @@ dashboardPage(
                 tabPanel("Set up",
                          sidebarLayout(
                            sidebarPanel(
-                             checkboxGroupInput("cVariables", h3("Variables"),
-                                                choices = names(data)),
+                             checkboxGroupInput("t4_cVariables", h3("Variables"),
+                                                choices = names(data4)),
                              h4("Parámetros aPriori"),
                              sliderInput("t4_s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
                              sliderInput("t4_s_b", "b <- Norm", min=1, max=10, value=5),
@@ -178,37 +190,111 @@ dashboardPage(
                              tabsetPanel(type = "tabs", 
                                          tabPanel("datos",
                                                   fluidRow(
-                                                    column(8, plotOutput("plot_data")),
-                                                    column(12, DT::dataTableOutput("table"))
+                                                    column(8, plotOutput("t4_plot_data")),
+                                                    column(12, DT::dataTableOutput("t4_table"))
                                                   ) 
                                          ),
                                          tabPanel("distribuciones aPriori",
                                                   fluidRow(
-                                                    column(4, plotOutput("plot_hist_A")),
-                                                    column(4, plotOutput("plot_hist_B")),
-                                                    column(4, plotOutput("plot_hist_Sd")),
-                                                    column(4, plotOutput("plot_hist_Total"))
+                                                    column(4, plotOutput("t4_plot_hist_A")),
+                                                    column(4, plotOutput("t4_plot_hist_B")),
+                                                    column(4, plotOutput("t4_plot_hist_Sd")),
+                                                    column(4, plotOutput("t4_plot_hist_Total"))
                                                   )
                                          )
                              )
                              
                            )
                          )
-                ),
-                tabPanel("Tarea 05",
-                         box(
-                           withMathJax(),
-                           width = 15,
-                           includeMarkdown("md/hw05.md")
-                         )
-                ),
-                tabPanel("Tarea 06",
-                         box(
-                           withMathJax(),
-                           width = 15,
-                           includeMarkdown("md/hw06.md")
-                         )
                 )
+
+              )
+      ),
+      
+      ################################################################
+      ###############---MCMC Bayesian Regression---###################
+      tabItem(tabName = "tarea5",
+              h2("Tarea 05: MCMC - Regresion Bayesiana"),
+              tabsetPanel(
+                tabPanel("Generalidades",
+                         box(
+                           width = 15,
+                           includeMarkdown("md/hw4-6.md")
+                         )
+                ),
+                
+                tabPanel("Teoria",
+                         box(
+                           withMathJax(),
+                           width = 15,
+                           "falta"
+                           #includeMarkdown("md/teo02.md")
+                         )
+                ),
+                tabPanel("Regresion Bayesiana",
+                         box(
+                           withMathJax(),
+                           width = 15,
+                           "falta"
+                           #includeMarkdown("md/teo02.md")
+                         )
+                         # sidebarLayout(
+                         #   sidebarPanel(
+                         #     checkboxGroupInput("t5_cVariables", h3("Variables"),
+                         #                        choices = names(data5)),
+                         #     numericInput("t5_nCadenas", "cadenas a simular", value=1, min=1, max=10, step=1),
+                         #     sliderInput("t5_sLongitud", "longitud de cadenas", min=10000, max=1000000, value=1000),
+                         #     sliderInput("t5_sBurnin", "Burnin", min=10, max=10000, value=5000),
+                         #     actionButton("t5_button", "Calcula MCMC"),  #Calcula MCMC
+                         #     
+                         #     h4("Parámetros aPriori"),
+                         #     sliderInput("t5_s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
+                         #     sliderInput("t5_s_b", "b <- Norm", min=1, max=10, value=5),
+                         #     sliderInput("t5_s_sigma", "sigma -> Unif", min=1, max=10, value=c(5, 6))
+                         #   ),
+                         #   
+                         #   mainPanel(
+                         #     tabsetPanel(type="tabs",
+                         #                 tabPanel("datos", 
+                         #                          fluidRow(
+                         #                            column(8, plotOutput("plot_data")),
+                         #                            column(12, DT::dataTableOutput("table"))
+                         #                          )
+                         #                 ),
+                         #                 tabPanel("distribuciones aPriori",
+                         #                          fluidRow(
+                         #                            column(4, plotOutput("plot_hist_A")),
+                         #                            column(4, plotOutput("plot_hist_B")),
+                         #                            column(4, plotOutput("plot_hist_Sd")),
+                         #                            column(4, plotOutput("plot_hist_Total"))
+                         #                          )
+                         #                 ),
+                         #                 tabPanel("Parámetros de la regresión",
+                         #                          fluidRow(
+                         #                            column(4, plotOutput("hist_posteriori_A")),
+                         #                            column(4, plotOutput("hist_posteriori_B")),
+                         #                            column(4, plotOutput("hist_posteriori_Sd")),
+                         #                            column(4, plotOutput("plot_posteriori_A")),
+                         #                            column(4, plotOutput("plot_posteriori_B")),
+                         #                            column(4, plotOutput("plot_posteriori_Sd"))
+                         #                          )
+                         #                 ),
+                         #                 tabPanel("Multiples cadenas",
+                         #                          fluidRow(
+                         #                            column(4, verbatimTextOutput("summary")),
+                         #                            column(4, plotOutput("regresionCalc")),
+                         #                            column(12, DT::dataTableOutput("cadenasMCMC"))
+                         #                          )),
+                         #                 tabPanel("Convergencia de MCMC's", 
+                         #                          plotOutput("pConvergencia_A"),
+                         #                          plotOutput("pConvergencia_B"),
+                         #                          plotOutput("pConvergencia_Sd"))
+                         #     )
+                         #   )
+                         # )
+                )
+                
+                
               )
       ),## fin slide menu
       
