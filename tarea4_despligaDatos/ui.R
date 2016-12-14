@@ -19,9 +19,9 @@ shinyUI(fluidPage(
       checkboxGroupInput("cVariables", h3("Variables"),
                          choices = names(data)),
       h4("Parámetros aPriori"),
-      sliderInput("s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
-      sliderInput("s_b", "b <- Norm", min=1, max=10, value=5),
-      sliderInput("s_sigma", "sigma -> Unif", min=1, max=10, value=c(5, 6))
+      sliderInput("t4_s_a", "a -> Unif ", min=1, max=10, value=c(5,8)),
+      sliderInput("t4_s_b", "b <- Norm", min=1, max=10, value=5),
+      sliderInput("t4_s_sigma", "sigma -> Unif", min=1, max=10, value=c(5, 6))
     ),
     
     mainPanel(
