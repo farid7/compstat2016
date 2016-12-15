@@ -537,7 +537,7 @@ shinyServer(function(input, output) {
       return()
     else
       return({
-        plot(dataInput()[,2], dataInput()[,1])
+        plot(dataInput()[,2], dataInput()[,1], main="Regresiòn lineal", xlab="Taste", ylab="Acido")
         lines(dataInput()[,2], dataInput()[,2]*mean(df()[,1]) + mean(df()[,2]), col="blue")
       })
   })
@@ -547,7 +547,7 @@ shinyServer(function(input, output) {
       return()
     else
       return({
-        pacf(df()[,1], lag.max = NULL, plot = TRUE, na.action = na.fail)
+        pacf(df()[,1], lag.max = NULL, plot = TRUE, na.action = na.fail, main="Auto-correlación")
         #acf(df()[,1], lag.max = NULL, type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
       })
   })

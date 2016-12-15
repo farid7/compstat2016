@@ -274,8 +274,8 @@ dashboardPage(
                                          ),
                                          tabPanel("Multiples cadenas",
                                                   fluidRow(
-                                                    column(4, plotOutput("regresionCalc")),
-                                                    column(4, plotOutput("autocorrelacionCalc")),
+                                                    column(6, plotOutput("regresionCalc")),
+                                                    column(6, plotOutput("autocorrelacionCalc")),
                                                     column(12, DT::dataTableOutput("cadenasMCMC"))
                                                   )),
                                          tabPanel("Convergencia de MCMC's",
