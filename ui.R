@@ -28,7 +28,7 @@ dashboardPage(
     title = "Estadística computacional",
     #    title = tags$a(href='http://mycompanyishere.com',
     #                   tags$img(src='logo_itam_70.png')),
-    titleWidth = "900px"
+    titleWidth = "850px"
     ),
   skin = "green",
   dashboardSidebar(
@@ -132,7 +132,7 @@ dashboardPage(
                                               max=0.1, min=0.01, value=0.05, step=0.01),
                                   
                                   sliderInput("n", 
-                                              "Number of random points:", 
+                                              "Número de puntos aleatorios:", 
                                               value = 100,
                                               min = 2, 
                                               max = 1000)
@@ -159,7 +159,7 @@ dashboardPage(
                 tabPanel("Generalidades",
                          box(
                            width = 15,
-                           includeMarkdown("md/hw4-6.md")
+                           includeMarkdown("md/hw04.md")
                          )
                 ),
                 
@@ -215,7 +215,7 @@ dashboardPage(
                 tabPanel("Generalidades",
                          box(
                            width = 15,
-                           includeMarkdown("md/hw4-6.md")
+                           includeMarkdown("md/hw05.md")
                          )
                 ),
                 
@@ -274,8 +274,8 @@ dashboardPage(
                                          ),
                                          tabPanel("Multiples cadenas",
                                                   fluidRow(
-                                                    column(4, verbatimTextOutput("summary")),
                                                     column(4, plotOutput("regresionCalc")),
+                                                    column(4, plotOutput("autocorrelacionCalc")),
                                                     column(12, DT::dataTableOutput("cadenasMCMC"))
                                                   )),
                                          tabPanel("Convergencia de MCMC's",

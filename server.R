@@ -172,7 +172,7 @@ shinyServer(function(input, output) {
            q2 = quantile(data1(), seq(0,1,0.01));
            plot(q1, q2, main="Q-Q Plot", ylab = "geomInv", xlab="qgeom")}
     )
-    plot(data1()[1:length(data1())-1], data1()[2:length(data1())], main = "Secuencia en n??meros")
+    plot(data1()[1:length(data1())-1], data1()[2:length(data1())], main = "Secuencia en números")
     #qplot(data1()[-length(data1())], data1()[-1], main = "Secuencia en n??meros")
   })
   output$distPlot <- renderPlot({
@@ -398,11 +398,13 @@ shinyServer(function(input, output) {
       theta0 <- c(1,1,1)
       temp <- dataInput()
       chain <- runMCMC(x=temp[,2], y=Taste, startValue=theta0, iterations=input$sLongitud)
+      chain <- chain[-(1:input$sBurnin),]
       chain <- data.frame(a=chain[,1], b=chain[,2], sd=chain[,3])
       if(input$nCadenas > 1){
        for (i in 2:input$nCadenas){
         aux <- theta0 + round(10*runif(1))
         aux2 <- runMCMC(x=temp[,2], y=Taste, startValue=aux, iterations=input$sLongitud)
+        aux2 <- aux2[-(1:input$sBurnin),]
         aux2 <- data.frame(a=aux2[,1], b=aux2[,2], sd=aux2[,3])
         chain <- cbind(chain, aux2)
        }
@@ -425,7 +427,7 @@ shinyServer(function(input, output) {
     if(is.null(df()))
       return()
     else{
-      return({AA = mean(df()[-(1:input$sBurnin),1])
+      return({AA = mean(df()[,1])
       hist(df()[,1], main=paste("Posterior A: ", AA))
       abline(v=AA, col="red")
       })
@@ -435,7 +437,7 @@ shinyServer(function(input, output) {
     if(is.null(df()))
       return()
     else{
-      return({BB = mean(df()[-(1:input$sBurnin),2])
+      return({BB = mean(df()[,2])
       hist(df()[,2], main=paste("Posterior B: ", BB))
       abline(v=BB, col="red")
       })
@@ -445,7 +447,7 @@ shinyServer(function(input, output) {
     if(is.null(df()))
       return()
     else{
-      return({Ssd = mean(df()[-(1:input$sBurnin),3])
+      return({Ssd = mean(df()[,3])
       hist(df()[,3], main=paste("Posterior A: ", Ssd))
       abline(v=Ssd, col="red")
       })
@@ -540,6 +542,15 @@ shinyServer(function(input, output) {
       })
   })
 
+  output$autocorrelacionCalc <- renderPlot({
+    if(is.null(input$cVariables))
+      return()
+    else
+      return({
+        pacf(df()[,1], lag.max = NULL, plot = TRUE, na.action = na.fail)
+        #acf(df()[,1], lag.max = NULL, type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+      })
+  })
   ##############################################################################
   output$pConvergencia_A <- renderPlot({
     if(is.null(df()))
