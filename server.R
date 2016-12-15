@@ -558,10 +558,11 @@ shinyServer(function(input, output) {
     else{
       par(mfrow=(c(1,1)))
       return({plot(df()[,1], type = "l", main="Parametro A")
-        lines(df()[,4], col="red")
-        lines(df()[,7], col="blue")
-        lines(df()[,10], col="green")
-        lines(df()[,13], col="black")
+        if(input$nCadenas > 1){
+          for(i in 2:input$nCadenas){
+        lines(df()[,i*3-2], col=i)
+          }
+        }
       })
     }
   })
@@ -571,10 +572,11 @@ shinyServer(function(input, output) {
     else{
       par(mfrow=(c(1,1)))
       return({plot(df()[,2], type = "l", main="Parametro B")
-        lines(df()[,5], col="red")
-        lines(df()[,8], col="blue")
-        lines(df()[,11], col="green")
-        lines(df()[,14], col="black")
+        if(input$nCadenas > 1){
+          for(i in 2:input$nCadenas){
+            lines(df()[,i*3-1], col=i)
+          }
+        }
       })
     }
   })
@@ -584,10 +586,11 @@ shinyServer(function(input, output) {
     else{
       par(mfrow=(c(1,1)))
       return({plot(df()[,3], type = "l", main="Parametro Sd")
-        lines(df()[,6], col="red")
-        lines(df()[,9], col="blue")
-        lines(df()[,12], col="green")
-        lines(df()[,15], col="black")
+        if(input$nCadenas > 1){
+          for(i in 2:input$nCadenas){
+            lines(df()[,i*3], col=i)
+          }
+        }
       })
     }
   })

@@ -51,13 +51,7 @@ dashboardPage(
                            includeMarkdown("md/hw01.md")
                          )
                 ),
-                tabPanel("Teoría",
-                         box(
-                           withMathJax(),
-                           width = 15,
-                           includeMarkdown("md/teo01.md")
-                         )
-                ),
+  
                 tabPanel( "Ejercicio",
                           fluidRow(
                             box(title = "Parámetros", "", width=12,
@@ -111,13 +105,7 @@ dashboardPage(
                              includeMarkdown("md/hw02.md")
                            )
                   ),
-                  tabPanel("Teoría",
-                           box(
-                             withMathJax(),
-                             width = 15,
-                             includeMarkdown("md/teo02.md")
-                           )
-                  ),
+                 
                   tabPanel( "Ejercicio",
                             fluidRow(
                               sidebarLayout(
@@ -156,22 +144,14 @@ dashboardPage(
       tabItem(tabName = "tarea4",
               h2("Tarea 04: Set up inicial para MCMC"),
               tabsetPanel(
-                tabPanel("Generalidades",
+                tabPanel("Instrucciones",
                          box(
                            width = 15,
                            includeMarkdown("md/hw04.md")
                          )
                 ),
                 
-                tabPanel("Teoria",
-                         box(
-                           withMathJax(),
-                           width = 15,
-                           "falta"
-                           #includeMarkdown("md/teo02.md")
-                         )
-                ),
-                tabPanel("Datos iniciales",
+                tabPanel("Ejercicio",
                          sidebarLayout(
                            sidebarPanel(
                              checkboxGroupInput("t4_cVariables", h3("Variables"),
@@ -219,14 +199,6 @@ dashboardPage(
                          )
                 ),
                 
-                tabPanel("Teoria",
-                         box(
-                           withMathJax(),
-                           width = 15,
-                           "falta"
-                           #includeMarkdown("md/teo02.md")
-                         )
-                ),
                 tabPanel("Regresion Bayesiana",
                          sidebarLayout(
                            sidebarPanel(
