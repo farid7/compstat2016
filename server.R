@@ -518,13 +518,9 @@ shinyServer(function(input, output) {
       return()
     else{
       return({Ssd = mean(df()[-(1:input$sBurnin),3])
-      
-      # hist(df()[,3], main=paste("Posterior A: ", Ssd))
-      # abline(v=Ssd, col="red")
-      
       h <- hist(df()[,3], plot=F, breaks=10)
       d <- density(df()[,3])
-      hist(df()[,3], main=paste("Posterior B: ", Ssd),  breaks=10)
+      hist(df()[,3], main=paste("Posterior sd: ", Ssd),  breaks=10)
       abline(v=Ssd, col="red")
       lines(x=d$x, y=d$y*length(df()[,3])*diff(h$breaks)[1], ldw=2)
       })
@@ -557,7 +553,7 @@ shinyServer(function(input, output) {
       return()
     else{
       par(mfrow=(c(1,1)))
-      return({plot(df()[,1], type = "l", main="Parametro A")
+      return({plot(df()[,1], type = "l", main="Parametro A", ylab="A", xlab="iteraciones + Burnin")
         if(input$nCadenas > 1){
           for(i in 2:input$nCadenas){
         lines(df()[,i*3-2], col=i)
@@ -571,7 +567,7 @@ shinyServer(function(input, output) {
       return()
     else{
       par(mfrow=(c(1,1)))
-      return({plot(df()[,2], type = "l", main="Parametro B")
+      return({plot(df()[,2], type = "l", main="Parametro B", ylab="B", xlab="iteraciones + Burnin")
         if(input$nCadenas > 1){
           for(i in 2:input$nCadenas){
             lines(df()[,i*3-1], col=i)
@@ -585,7 +581,7 @@ shinyServer(function(input, output) {
       return()
     else{
       par(mfrow=(c(1,1)))
-      return({plot(df()[,3], type = "l", main="Parametro Sd")
+      return({plot(df()[,3], type = "l", main="Parametro Sd", ylab="Sd", xlab="iteraciones + Burnin")
         if(input$nCadenas > 1){
           for(i in 2:input$nCadenas){
             lines(df()[,i*3], col=i)
