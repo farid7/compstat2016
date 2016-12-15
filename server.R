@@ -304,6 +304,8 @@ shinyServer(function(input, output) {
     hist(t4_priori_a() * t4_priori_b() * t4_priori_sd(), main="distribucin aPriori")
   })
   
+  
+  
   ##########################################################
   ############---Regresion Bayesiana: MCMC---##############
   n <- dim(data5)[1]
@@ -480,6 +482,52 @@ shinyServer(function(input, output) {
 
     }
   })
+  
+  output$plot_hist_Afinal <- renderPlot({
+    if(is.null(df()))
+      return()
+    else{
+      return({AA = mean(df()[-(1:input$sBurnin),1])
+      h <- hist(df()[,1], plot=F, breaks=10)
+      d <- density(df()[,1])
+      hist(df()[,1], main=paste("Posterior A: ", AA),  breaks=10)
+      abline(v=AA, col="red")
+      lines(x=d$x, y=d$y*length(df()[,1])*diff(h$breaks)[1], ldw=2)
+      })
+    }
+  })
+  output$plot_hist_Bfinal <- renderPlot({
+    if(is.null(df()))
+      return()
+    else{
+      return({
+      BB = mean(df()[-(1:input$sBurnin),2])
+
+      h <- hist(df()[,2], plot=F, breaks=10)
+      d <- density(df()[,2])
+      hist(df()[,2], main=paste("Posterior B: ", BB),  breaks=10)
+      abline(v=BB, col="red")
+      lines(x=d$x, y=d$y*length(df()[,2])*diff(h$breaks)[1], ldw=2)
+      })
+    }
+  })
+  output$plot_hist_Sdfinal <- renderPlot({
+    if(is.null(df()))
+      return()
+    else{
+      return({Ssd = mean(df()[-(1:input$sBurnin),3])
+      
+      # hist(df()[,3], main=paste("Posterior A: ", Ssd))
+      # abline(v=Ssd, col="red")
+      
+      h <- hist(df()[,3], plot=F, breaks=10)
+      d <- density(df()[,3])
+      hist(df()[,3], main=paste("Posterior B: ", Ssd),  breaks=10)
+      abline(v=Ssd, col="red")
+      lines(x=d$x, y=d$y*length(df()[,3])*diff(h$breaks)[1], ldw=2)
+      })
+    }
+  })
 
   ##############################################################################
   output$regresionCalc <- renderPlot({
@@ -534,3 +582,4 @@ shinyServer(function(input, output) {
   })
 })
 
+#shiny::runGitHub("compstat2016", "farid7")
